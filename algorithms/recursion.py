@@ -49,9 +49,6 @@ def sum_values(values_list):
     if len(values_list) == 0:
         return 0
 
-    elif len(values_list) == 1:
-        return values_list[0]
-
     else:
         return values_list[0] + sum_values(values_list[1:])
 
