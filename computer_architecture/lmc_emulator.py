@@ -136,7 +136,7 @@ class LMCProcessor:
         self.__accumulator += self.__memory.read(operand)
 
     def __sub(self, operand):
-        self.__accumulator -= operand
+        self.__accumulator -= self.__memory.read(operand)
 
     def __store(self, operand):
         # operand is the memory location to store the value into
