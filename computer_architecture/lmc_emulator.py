@@ -45,11 +45,12 @@ Opcodes are from 0-9 (each followed by 00-99)
 
 """
 
+
 class LMCio:
 
     @staticmethod
     def display(value):
-        print(f"902: {value}")
+        print(f"902 instruction: {value}")
 
     @staticmethod
     def input():
@@ -116,7 +117,7 @@ class LMCProcessor:
 
     def fetch_instruction(self):
         self.__registers['memory_address_register'] = self.__registers['program_counter']
-        self.__read_memory()
+        self.__read_memory()  # Fetches the instruction at the location held on the MAR and copies to the MDR
         self.__registers['instruction_register'] = self.__registers['memory_data_register']
         self.__registers['program_counter'] += 1
 
@@ -134,15 +135,21 @@ class LMCProcessor:
     def halted(self):
         return self.__halted
 
-    def __halt(self, operand):
-        # operand is ignored but included in interface for compliance with other instructions
-        self.__halted = True
+    # General-purpose functionality
 
     def __read_memory(self):
+        # The action of 'reading' memory is to copy the data at the location held on the MAR onto the MDR
         self.__registers['memory_data_register'] = self.__memory.read(self.__registers['memory_address_register'])
 
     def __write_memory(self):
+        # The action of writing to memory is to copy the value on the MDR into the location held on the MAR
         self.__memory.write(self.__registers['memory_data_register'], self.__registers['memory_address_register'])
+
+    # Instruction set implementation
+
+    def __halt(self, operand):
+        # operand is ignored but included in interface for compliance with other instructions
+        self.__halted = True
 
     def __add(self, operand):
         self.__registers['memory_address_register'] = operand
