@@ -65,11 +65,14 @@ class LMCMemory:
             raise ValueError("Memory too large. Size must be between 1 and 255 bytes.")
 
     def display(self, location=None):
-        if location:
-            print(f"Location: {location}, Contents: {str(hex(self.__memory[location]))}")
+        # Type check required so that inspection of location 0x0 doesn't trigger whole memory dump
+        if type(location) != type(None):
+            contents = self.__memory[location]
+            print(f"Location: {location} ({hex(location)}), Contents: {contents} ({hex(contents)})")
         else:
             for i in range(len(self.__memory)):
-                print(f"Location: {i}, Contents: {str(hex(self.__memory[i]))}")
+                contents = self.__memory[i]
+                print(f"Location: {i} ({hex(i)}), Contents: {contents} ({hex(contents)})")
 
     def write(self, data, location):
         self.__memory[location] = data
@@ -80,15 +83,21 @@ class LMCMemory:
 
 class LMCProcessor:
 
+    # TODO: Add input/output instructions (901, 902)
+
     def __init__(self, memory: LMCMemory, io: LMCio):
-        self.__accumulator = 0x0
-        self.__program_counter = 0x0  # 8-bits
-        self.__instruction_register = 0x0  # 12-bits
-        self.__memory_address_register = 0x0  # 8-bits
-        self.__memory_data_register = 0x0  # 12-bits
+
         self.__memory = memory
         self.__io = io
         self.__halted = False
+
+        self.__registers = {
+            'accumulator': 0x0,
+            'program_counter': 0x0,
+            'instruction_register': 0x0,
+            'memory_address_register': 0x0,
+            'memory_data_register': 0x0,
+        }
 
         self.__instruction_set = {
             0x0: self.__halt,
@@ -103,24 +112,21 @@ class LMCProcessor:
 
     @property
     def registers(self):
-        return {
-            'acc': self.__accumulator,
-            'pc': self.__program_counter,
-            'ir': self.__instruction_register,
-            'mar': self.__memory_address_register,
-            'mdr': self.__memory_data_register,
-            'halted': self.__halted
-            }
+        return self.__registers.copy()
 
     def fetch_instruction(self):
-        self.__instruction_register = self.__memory.read(self.__program_counter)
-        self.__program_counter += 1
+        self.__registers['memory_address_register'] = self.__registers['program_counter']
+        self.__read_memory()
+        self.__registers['instruction_register'] = self.__registers['memory_data_register']
+        self.__registers['program_counter'] += 1
 
     def execute_instruction(self):
-        opcode = self.__instruction_register // 0x100
-        operand = self.__instruction_register - (self.__instruction_register // 0x100) * 0x100
+        # Use bitwise shift to extract opcode (shift 8 = 2 hex digits)
+        opcode = self.__registers['instruction_register'] >> 8
+        # Use bitwise AND to mask operand from the instruction
+        operand = self.__registers['instruction_register'] & 0x0FF
 
-        print(f"opcode: {opcode}, operand: {operand:02d}")
+        print(f"Instruction fetched: opcode: {hex(opcode)}, operand: {hex(operand)}") # redundant, can see inst register
 
         self.__instruction_set[opcode](operand)
 
@@ -132,33 +138,47 @@ class LMCProcessor:
         # operand is ignored but included in interface for compliance with other instructions
         self.__halted = True
 
+    def __read_memory(self):
+        self.__registers['memory_data_register'] = self.__memory.read(self.__registers['memory_address_register'])
+
+    def __write_memory(self):
+        self.__memory.write(self.__registers['memory_data_register'], self.__registers['memory_address_register'])
+
     def __add(self, operand):
-        self.__accumulator += self.__memory.read(operand)
+        self.__registers['memory_address_register'] = operand
+        self.__read_memory()  # Fetches data from memory and saves on memory_data_register
+        self.__registers['accumulator'] += self.__registers['memory_data_register']
 
     def __sub(self, operand):
-        self.__accumulator -= self.__memory.read(operand)
+        self.__registers['memory_address_register'] = operand
+        self.__read_memory()
+        self.__registers['accumulator'] -= self.__registers['memory_data_register']
 
     def __store(self, operand):
         # operand is the memory location to store the value into
-        self.__memory.write(self.__accumulator, operand)
+        self.__registers['memory_address_register'] = operand
+        self.__registers['memory_data_register'] = self.__registers['accumulator']
+        self.__write_memory()
 
     def __load(self, operand):
         # operand is the memory location to retrieve value from
-        self.__accumulator = self.__memory.read(operand)
+        self.__registers['memory_address_register'] = operand
+        self.__read_memory()
+        self.__registers['accumulator'] = self.__registers['memory_data_register']
 
     def __branch_if_zero(self, operand):
 
-        if self.__accumulator == 0:
-            self.__program_counter = operand
+        if self.__registers['accumulator'] == 0:
+            self.__registers['program_counter'] = operand
 
     def __branch_always(self, operand):
 
-        self.__program_counter = operand
+        self.__registers['program_counter'] = operand
 
     def __branch_if_zero_or_positive(self, operand):
 
-        if self.__accumulator >= 0:
-            self.__program_counter = operand
+        if self.__registers['accumulator'] >= 0:
+            self.__registers['program_counter'] = operand
 
 
 class LMCEmulatorController:
@@ -166,10 +186,16 @@ class LMCEmulatorController:
     # TODO: Add assembler to enable programs to be loaded from LMC ASM (include symbols?)
     # TODO: Add disassembler to show instructions for each binary encoding of instruction
     # TODO: Add ability to load program from binary
+    # TODO: Add "verbose" option to operations to print what instruction they are processing
 
-    memory: LMCMemory = LMCMemory(0x63)  # 99 memory locations
+    memory: LMCMemory = LMCMemory(0x64)  # 100 memory locations
     io: LMCio = LMCio()
     processor: LMCProcessor = LMCProcessor(memory, io)
+
+    @staticmethod
+    def assemble(in_asm_file, out_bin_file):
+        # TODO: Take in asm file and convert to binary, save binary output
+        pass
 
     @staticmethod
     def load_program():
@@ -188,9 +214,48 @@ class LMCEmulatorController:
             print(f"{key}: {str(hex(value))}")
 
     @staticmethod
-    def test():
+    def step():
 
-        LMCEmulatorController.load_program()
+        while not LMCEmulatorController.processor.halted:
+
+            LMCEmulatorController.processor.fetch_instruction()
+            LMCEmulatorController.processor.execute_instruction()
+            LMCEmulatorController.show_processor_state()
+            command = input("Press Enter to continue with next instruction, or enter M(x,y) to inspect memory: ")
+
+            # Show "Help" information
+            if len(command) > 0 and command[0].upper() == "H":
+                print("Help: Enter m to see memory, enter m(x) to see contents of memory at location x, enter m(x, y) "
+                      "to see contents of memory from locations x to y inclusive.")
+                command = input("Press Enter to continue with next instruction, or enter M(x,y) to inspect memory: ")
+
+            # Show memory contents - range provided
+            if len(command) > 1 and command[1].upper() == "(":
+                if "," in command[1:]:
+                    memory_range = command[2:-1].split(",")
+
+                    for i in range(len(memory_range)):
+                        memory_range[i] = int(memory_range[i])
+
+                    for location in range(memory_range[0], memory_range[1] + 1):
+                        LMCEmulatorController.memory.display(location)
+
+                # Show memory contents - single location provided
+                else:
+                    location = int(command[2:-1])
+                    LMCEmulatorController.memory.display(location)
+
+                input("Press Enter to continue with next instruction...")
+
+            # Show memory contents - no range provided, so show all of memory
+            if len(command) == 1 and command[0].upper() == "M":
+                LMCEmulatorController.memory.display()
+                input("Press Enter to continue with next instruction...")
+
+        print("Processor halted / End of program")
+
+    @staticmethod
+    def run():
 
         while not LMCEmulatorController.processor.halted:
 
@@ -200,6 +265,5 @@ class LMCEmulatorController:
 
 if __name__ == "__main__":
 
-    LMCEmulatorController.test()
-    LMCEmulatorController.show_processor_state()
-    LMCEmulatorController.show_memory()
+    LMCEmulatorController.load_program()
+    LMCEmulatorController.step()
