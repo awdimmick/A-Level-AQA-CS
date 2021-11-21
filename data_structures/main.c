@@ -1,5 +1,5 @@
 //
-// Created by Adam Dimmick on 20/11/2021.
+// Contains routines for testing each C-based data structure implementation
 //
 
 #include <stdio.h>
@@ -13,24 +13,9 @@ void test_list_queue();
 
 int main(void) {
 
-    //test_linked_list();
+    test_linked_list();
     //test_circular_queue();
     //test_list_queue();
-
-    int a = 4;
-    int b = 5;
-    int *p = &a;
-
-    for (int i=0; i<10000; i++){
-        //printf("%d\n", p[i]);
-        if (p[i] == b){
-            printf("Target found at location %p\n", &p[i]);
-        }
-    }
-
-
-
-
 
     return 0;
 }
