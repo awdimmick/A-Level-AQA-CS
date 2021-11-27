@@ -13,6 +13,7 @@ void test_linear_queue();
 void test_circular_queue();
 void test_list_queue();
 void test_stack();
+void test_dynamic_stack();
 
 int main(void) {
 
@@ -20,8 +21,28 @@ int main(void) {
     //test_circular_queue();
     //test_list_queue();
     //test_stack();
-    test_linear_queue();
+    //test_linear_queue();
+    test_dynamic_stack();
     return 0;
+}
+
+void test_dynamic_stack(){
+
+    DynamicStack *ds = new_dynamic_stack();
+    printf("Popping items to stack...\n");
+    for (int i = 1; i <= 10; i++){
+        printf("%d ", i);
+        dynamic_push(i, ds);
+    }
+
+    printf("\n\nPeeking the top of the stack: %d", dynamic_peek(ds));
+
+    printf("\n\nPopping stack until empty..\n");
+    while (!dyanmic_is_empty(ds)){
+        printf("%d ", dynamic_pop(ds));
+    }
+    printf("\n");
+
 }
 
 void test_stack(){

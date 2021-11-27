@@ -2,7 +2,7 @@
 #include <stdlib.h> // Include stdlib.h for malloc
 #include "linked_list.h"
 
-void append_to_list(Node *head, char data){
+void append_to_list(Node *head, int data){
     if (head->next == NULL)
     {
         head->next = malloc(sizeof(Node));
@@ -15,7 +15,7 @@ void append_to_list(Node *head, char data){
     }
 }
 
-Node *create_new_list(char data){
+Node *create_new_list(int data){
 
     Node *head = malloc(sizeof(Node));
     head->data = data;
@@ -24,7 +24,7 @@ Node *create_new_list(char data){
 
 }
 
-Node *find_item_in_list(Node *head, char item){
+Node *find_item_in_list(Node *head, int item){
 
     if (head->data == item){
         return head;
@@ -36,7 +36,7 @@ Node *find_item_in_list(Node *head, char item){
 
 }
 
-char get_item_from_list(Node *head, int index){
+int get_item_from_list(Node *head, int index){
 
     /* A bit of error checking - if the user enters an index less than 0, return -1. Also, if the enter an index that
        is too large, we will hit a null head, in which case we also return a null character to show this.*/
@@ -81,7 +81,7 @@ void print_list(Node *head){
 
 }
 
-void insert_item_into_list(Node *head, char data, int index){
+void insert_item_into_list(Node *head, int data, int index){
 
     Node *current = head;
     Node *new = malloc(sizeof(Node));

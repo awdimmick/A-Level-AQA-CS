@@ -6,6 +6,7 @@
 #define DATA_STRUCTURES_STACK_H
 
 #include <stdbool.h>
+#include "linked_list.h"
 
 typedef struct stack{
 
@@ -13,6 +14,18 @@ typedef struct stack{
     int maxSize, top;
 
 } Stack;
+
+typedef struct dynamicStack{
+
+    Node *top;
+
+} DynamicStack;
+
+DynamicStack *new_dynamic_stack(void);
+int dynamic_peek(DynamicStack *s);
+int dynamic_pop(DynamicStack *s);
+void dynamic_push(int item, DynamicStack *s);
+bool dyanmic_is_empty(DynamicStack *s);
 
 Stack *new_stack(int size);
 int peek(Stack *s);

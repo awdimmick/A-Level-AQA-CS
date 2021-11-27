@@ -8,7 +8,7 @@
 /* Define the list_node data structure */
 struct list_node
 {
-    char data;
+    int data;
     struct list_node *next;
 };
 
@@ -16,13 +16,13 @@ struct list_node
 typedef struct list_node Node;
 
 /* List function declarations */
-void append_to_list(Node *head, char data);
-Node *create_new_list(char data);
-Node *find_item_in_list(Node *head, char item);
-char get_item_from_list(Node *head, int index);
+void append_to_list(Node *head, int data);
+Node *create_new_list(int data);
+Node *find_item_in_list(Node *head, int item);
+int get_item_from_list(Node *head, int index);
 int get_list_length(Node *head);
 void print_list(Node *head);
-void insert_item_into_list(Node *head, char data, int index);
+void insert_item_into_list(Node *head, int data, int index);
 Node *remove_item_from_list(Node *head, int index);
 void delete_list(Node *head);
 

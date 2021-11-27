@@ -51,3 +51,37 @@ bool stack_empty(Stack *s){
 bool stack_full(Stack *s){
     return (s->top == s->maxSize - 1);
 }
+
+DynamicStack *new_dynamic_stack(void){
+    DynamicStack *ds = malloc(sizeof(DynamicStack));
+    ds->top = NULL;
+    return ds;
+}
+
+int dynamic_peek(DynamicStack *s){
+    if (s->top != NULL){
+        return s->top->data;
+    }
+    return -1;
+};
+
+int dynamic_pop(DynamicStack *s){
+    if (s->top == NULL){
+        return -1;
+    }
+    int popped_item = s->top->data;
+    Node *popped = s->top;
+    s->top = s->top->next;
+    free(popped);
+    return popped_item;
+};
+
+void dynamic_push(int item, DynamicStack *s){
+    Node *new = malloc(sizeof(Node));
+    new->next = s->top;
+    new->data = item;
+    s->top = new;
+}
+bool dyanmic_is_empty(DynamicStack *s){
+    return (s->top == NULL);
+}
