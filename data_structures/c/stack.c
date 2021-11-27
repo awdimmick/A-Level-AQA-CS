@@ -33,6 +33,8 @@ int pop (Stack *s){
         s->top--;
         return item;
     }
+
+    return -1;
 }
 
 void push (int item, Stack *s){

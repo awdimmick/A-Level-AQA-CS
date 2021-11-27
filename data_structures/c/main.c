@@ -6,6 +6,7 @@
 #include "linked_list.h"
 #include "queues.h"
 #include "stack.h"
+#include "graphs.h"
 
 void test_linked_list();
 void test_linear_queue();
@@ -18,24 +19,8 @@ int main(void) {
     //test_linked_list();
     //test_circular_queue();
     //test_list_queue();
-
-
-/* showing how array notation can be used with pointers
-    int a = 4;
-    int b = 5;
-    int *p = &a;
-
-    for (int i=0; i<10000; i++){
-        //printf("%d\n", p[i]);
-        if (p[i] == b){
-            printf("Target found at location %p\n", &p[i]);
-        }
-    }
-*/
-
-
-    test_stack();
-
+    //test_stack();
+    test_linear_queue();
     return 0;
 }
 

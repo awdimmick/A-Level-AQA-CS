@@ -1,27 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "graphs.h"
 
-typedef struct graph_node{
-  char id;
-  struct list_node *adjacentNodes;
-} GraphNode;
-
-typedef struct list_node{
-  GraphNode *gn;
-  struct list_node *next;    
-} ListNode;
-
-typedef struct graph {
-  GraphNode *nodes;
-  int nodes_count;
-} Graph;
-
-Graph *create_graph(int nodes_count);
-void print_graph_node(GraphNode *gn);
-void print_graph(Graph *g);
-void add_edge(GraphNode *a, GraphNode *b);
-
-int main(void) {
+void test_graph(void) {
   
   Graph *g = create_graph(5);
 
@@ -48,8 +29,6 @@ int main(void) {
   add_edge(&g->nodes[4], &g->nodes[3]);
   
   print_graph(g);
-
-  return 0;
 }
 
 void add_edge(GraphNode *a, GraphNode *b){
