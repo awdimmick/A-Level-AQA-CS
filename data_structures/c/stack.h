@@ -6,7 +6,7 @@
 #define DATA_STRUCTURES_STACK_H
 
 #include <stdbool.h>
-#include "linked_list.h"
+#include "linked_list.h". // available here: https://github.com/awdimmick/A-Level-AQA-CS/tree/master/data_structures/c
 
 typedef struct stack{
 
