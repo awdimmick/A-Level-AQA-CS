@@ -7,11 +7,10 @@ Science.
 
 class Stack:
 
-    __data = []
-    __sp = -1
-    __max_size = 6
-
     def __init__(self, size = None):
+        self.__data = []
+        self.__sp = -1
+
         self.__max_size = size
 
     def push(self, d):
