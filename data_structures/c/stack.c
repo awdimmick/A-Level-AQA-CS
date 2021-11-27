@@ -1,3 +1,7 @@
+//
+// Created by Adam Dimmick on 21/11/2021.
+//
+
 #include "stack.h"
 #include <stdlib.h>
 

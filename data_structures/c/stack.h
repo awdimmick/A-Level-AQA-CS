@@ -1,3 +1,7 @@
+//
+// Created by Adam Dimmick on 21/11/2021.
+//
+
 #ifndef DATA_STRUCTURES_STACK_H
 #define DATA_STRUCTURES_STACK_H
 

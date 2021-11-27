@@ -1,24 +1,59 @@
 //
-// Contains routines for testing each C-based data structure implementation
+// Created by Adam Dimmick on 20/11/2021.
 //
 
 #include <stdio.h>
 #include "linked_list.h"
 #include "queues.h"
+#include "stack.h"
 
 void test_linked_list();
 void test_linear_queue();
 void test_circular_queue();
 void test_list_queue();
+void test_stack();
 
 int main(void) {
 
-    test_linked_list();
+    //test_linked_list();
     //test_circular_queue();
     //test_list_queue();
 
+
+/* showing how array notation can be used with pointers
+    int a = 4;
+    int b = 5;
+    int *p = &a;
+
+    for (int i=0; i<10000; i++){
+        //printf("%d\n", p[i]);
+        if (p[i] == b){
+            printf("Target found at location %p\n", &p[i]);
+        }
+    }
+*/
+
+
+    test_stack();
+
     return 0;
 }
+
+void test_stack(){
+
+    Stack *s = new_stack(5);
+
+    for (int i = 0; !stack_full(s); i++){
+        push(i, s);
+    }
+
+    // Output should be 4, 3, 2, 1, 0
+    while (!stack_empty(s)){
+        printf("%d\n", pop(s));
+    }
+
+}
+
 
 void test_list_queue(){
 
