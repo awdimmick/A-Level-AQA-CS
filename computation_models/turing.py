@@ -44,6 +44,7 @@ class TM:
         self.__halting_states = halting_states.copy()
 
     def move_head(self, direction: int):
+        # This procedure simulates the infinite tape, as opposed to a fixed-length list.
 
         # If moving left, check there is any tape to the left first. If not, add some.
         if direction == LEFT:
