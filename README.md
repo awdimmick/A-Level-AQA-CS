@@ -1,4 +1,4 @@
 # A-Level-AQA-CS
-A collection of Python scripts to accompany AQA A Level Computer Science
+A collection of short programs (mostly in Python, but some in C) to accompany AQA A Level Computer Science
 
-Project started by A. W. Dimmick, Shiplake College
+Project started by A. W. Dimmick, Reading School, UK
