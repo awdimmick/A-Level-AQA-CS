@@ -49,6 +49,21 @@ incremenet_tf = {
 
 }
 
+and_tf = {
+    ('Ss', '0'): ('S0', '0', RIGHT),
+    ('Ss', '1'): ('S1', '1', RIGHT),
+
+    ('S0', '0'): ('S0', '0', RIGHT),
+    ('S0', '1'): ('S0', '1', RIGHT),
+    ('S0', '#'): ('S0', '#', RIGHT),
+    ('S0', BLANK): ('Sf', '0', LEFT),
+
+    ('S1', '0'): ('S0', '0', RIGHT),
+    ('S1', '1'): ('S1', '1', RIGHT),
+    ('S1', '#'): ('S1', '#', RIGHT),
+    ('S1', BLANK): ('Sf', '1', LEFT),
+
+}
 
 class TM:
 
@@ -132,8 +147,8 @@ if __name__ == "__main__":
 
     # Get parameters from user
     option = ""
-    while option not in ['1', '2']:
-        option = input("Which program do you wish to process?\n1) Bit copier\n2) Incrementer\n> ")
+    while option not in ['1', '2', '3']:
+        option = input("Which program do you wish to process?\n1) Bit copier\n2) Incrementer\n3) Logical AND\n> ")
 
     if option == "1":
         tf = copy_bits_tf
@@ -144,6 +159,11 @@ if __name__ == "__main__":
         tf = incremenet_tf
         start_state = "S0"
         halt_states = ["S3"]
+
+    elif option == "3":
+        tf = and_tf
+        start_state = "Ss"
+        halt_states = ["Sf"]
 
     tape_data = input(
         "Enter the contents of the tape, using a space for a blank cell and # to signify the end of data.\n> ")
