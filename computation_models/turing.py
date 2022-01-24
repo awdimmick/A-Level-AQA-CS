@@ -1,5 +1,6 @@
 """
-Implmenetation of a simple Turing machine
+A Turing machine that can accept multiple transition functions
+AWD 2022
 """
 
 RIGHT = 1
@@ -8,7 +9,8 @@ BLANK = ' '
 NULL = 0
 
 # Define the TM's transition function
-tf = {
+copy_bits_tf = {
+    # From past AQA June 2013 COMP3 Q7
     ('Sb', '0'): ('S0', 'x', RIGHT),
     ('Sb', '1'): ('S1', 'y', RIGHT),
     ('Sb', '#'): ('St', '#', RIGHT),
@@ -28,6 +30,22 @@ tf = {
     ('Sr', '#'): ('Sr', '#', LEFT),
     ('Sr', 'x'): ('Sb', '0', RIGHT),
     ('Sr', 'y'): ('Sb', '1', RIGHT),
+
+}
+
+incremenet_tf = {
+    # From Heathcote & Heathcote p275, example 2
+    ('S0', BLANK): ('S1', BLANK, LEFT),
+    ('S0', '0'): ('S0', '0', RIGHT),
+    ('S0', '1'): ('S0', '1', RIGHT),
+
+    ('S1', BLANK): ('S2', '1', RIGHT),
+    ('S1', '0'): ('S2', '1', LEFT),
+    ('S1', '1'): ('S1', '0', LEFT),
+
+    ('S2', BLANK): ('S3', BLANK, LEFT),
+    ('S2', '0'): ('S2', '0', RIGHT),
+    ('S2', '1'): ('S2', '1', RIGHT),
 
 }
 
@@ -81,7 +99,10 @@ class TM:
         self.display_state()
 
     def display_state(self):
-        print(f"Current state:\t\t{self.__current_state}")
+        if self.__current_state in self.__halting_states:
+            print(f"\nHALTED! Final state: {self.__current_state}")
+        else:
+            print(f"Current state:\t\t{self.__current_state}")
         self.display_tape()
 
     def display_tape(self):
@@ -107,5 +128,34 @@ class TM:
         print(offset + "^")
 
 
-tm = TM("01#", tf, "Sb", ["St"])
-tm.execute(stepping_mode=True)
+if __name__ == "__main__":
+
+    # Get parameters from user
+    option = ""
+    while option not in ['1', '2']:
+        option = input("Which program do you wish to process?\n1) Bit copier\n2) Incrementer\n> ")
+
+    if option == "1":
+        tf = copy_bits_tf
+        start_state = "Sb"
+        halt_states = ["St"]
+
+    elif option == "2":
+        tf = incremenet_tf
+        start_state = "S0"
+        halt_states = ["S3"]
+
+    tape_data = input(
+        "Enter the contents of the tape, using a space for a blank cell and # to signify the end of data.\n> ")
+
+    try:
+        head_position = int(input("Enter the starting position of the head (default is 1):\n> "))
+
+    except ValueError:
+        head_position = 1
+
+    stepping = input("Use stepping mode? [y/N]\n> ").upper() == "Y"
+
+    # Instantiate TM and execute its transition function
+    tm = TM(tape_data, tf, start_state, halt_states, head_position)
+    tm.execute(stepping_mode=stepping)
