@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Mr. Dimmick's NAT demo</title>
+</head>
+<body>
+<h1>Hello!</h1>
+<p>Welcome to my demonstration of Network Address Translation and port forwarding!</p>
+<p>If you're seeing this page then the process is working. Here's what we did to get you here:</p>
+<ol>
+    <li>I set up a DHCP reservation on my local (home) router for my Raspberry Pi (which you are connected to).</li>
+    <li>I set up port forwarding on the router to forward inbound TCP packets for port 8080 to the Raspberry Pi's internal IP address (192.168.0.252) on port 5000.</li>
+    <li>I set up a simple Flask webapp on the Raspberry Pi to listen out for your HTTP request on port 5000 and respond with this page.</li>
+</ol>
+<h2>TCP/IP info</h2>
+<ul>
+    <li>My internal (private) IP: {{ local_internal_ip }}</li>
+    <li>My external (public) IP: {{ local_external_ip }}</li>
+    <li>My flask server port: {{ local_flask_port }}</li>
+    <li>Your external (public) IP: {{ remote_external_ip }}</li>
+    <li>Your TCP port being used by me to send this data back to you: {{ remote_port }}</li>
+    <li>I can't tell you your internal IP!</li>
+</ul>
+</body>
+</html>
