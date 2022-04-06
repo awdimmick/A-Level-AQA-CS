@@ -17,7 +17,8 @@
 <ul>
     <li>My internal (private) IP: {{ local_internal_ip }}</li>
     <li>My external (public) IP: {{ local_external_ip }}</li>
-    <li>My flask server port: {{ local_flask_port }}</li>
+    <li>The external port you contacted me on: {{local_external_port}}</li>
+    <li>My internal flask server port: {{ local_flask_port }} (the port forwarding on my router directed your incoming TCP packet to this port)</li>
     <li>Your external (public) IP: {{ remote_external_ip }}</li>
     <li>Your TCP port being used by me to send this data back to you: {{ remote_port }}</li>
     <li>I can't tell you your internal IP!</li>
