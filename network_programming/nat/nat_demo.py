@@ -8,7 +8,7 @@ def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.settimeout(0)
     try:
-        # doesn't have to be reachable
+        # doesn't even have to be reachable
         s.connect(('10.255.255.255', 1))
         IP = s.getsockname()[0]
     except Exception:
@@ -29,8 +29,9 @@ def hello_world():  # put application's code here
 
     return render_template("info.html", local_external_ip=get_external_ip(), local_internal_ip=get_local_ip(),
                            remote_external_ip = request.remote_addr, local_flask_port=5000,
-                           remote_port=request.environ.get('REMOTE_PORT'))
+                           remote_port=request.environ.get('REMOTE_PORT'), 
+			   local_external_port=8080)
 
 
 if __name__ == '__main__':
-    app.run(host="0.0.0.0")
+    app.run(host='0.0.0.0')
