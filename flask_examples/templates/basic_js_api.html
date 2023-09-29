@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Hello, world!</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+  <link rel="icon" href="favicon.png">
+
+  <script>
+    function setup_event_handlers(){
+        
+      // Get student data buttons
+        document.getElementById("btnGetData1").onclick = ()=>{getStudentDataFromAPI(1)};
+        document.getElementById("btnGetData2").onclick = ()=>{getStudentDataFromAPI(2)};
+        document.getElementById("btnGetAllData").onclick = getAllStudentsData;
+      
+        // Submit / post new student data fields and buttons
+        document.getElementById("btnPostNewStudentData").onclick = postDataToAPI;
+        document.getElementById("newStudentYearGroup").addEventListener("keypress", (e)=>{
+          if (e.key === "Enter"){
+            e.preventDefault();
+            postDataToAPI();
+          }
+        })
+    }
+
+    async function getStudentDataFromAPI(id){
+
+      // Get the student data from the API for a specific student id
+      const response = await fetch(`/student/${id}`);
+      // Get the returned JSON and assign to 'data' constant
+      const data = await response.json();
+      // Write the data into the "placeholderStudentData" div within the page, extracting the 
+      // relevant information from the 'data' object, which represents the requested student.
+      const data_area = document.getElementById("placeholderStudentData");
+      data_area.innerText  = `Name: ${data.name}, Year group: ${data.yearGroup}`;
+
+  }
+
+  async function getAllStudentsData(){
+
+    const data_area = document.getElementById("placeholderStudentData");
+    // Request the data about all students as a JSON object
+    const response = await fetch('/students');
+    const data = await response.json();
+    // Get the list of student objects from the 'students' member of the 'data' object
+    const students = data.students;
+    // Iterate through each student object in the 'students' list using a standard
+    // for loop:
+    data_area.innerHTML = "";
+    for (i = 0; i< students.length ; i++){
+      data_area.innerHTML += `<p>Name: ${students[i].name}, Year group: ${students[i].yearGroup}</p>`;
+    }
+
+  }
+  async function postDataToAPI(){
+
+    const student_name = document.getElementById("newStudentName");
+    const student_yg = document.getElementById("newStudentYearGroup");
+    // Extract the data to send to the server from the input fields on the page and assemble into an
+    // object
+    const student_data = {name: student_name.value, yearGroup: student_yg.value};
+
+    // Call the API with the POST method and provide the student data as the body of the request
+    const response = await fetch("/student", {
+      method: "POST",      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify(student_data)
+    }).then(()=>{                   
+      student_name.value = "";    // after the fetch completes, clear the input boxes
+      student_yg.value = "";
+    });  
+
+  }
+    
+</script>
+</head>
+<body onload="setup_event_handlers()">
+  <h1>Hello!</h1>
+
+  <button id="btnGetData1">Get data for Student 1!</button> 
+  <button id="btnGetData2">Get data for Student 2!</button> 
+  <button id="btnGetAllData">Get data for ALL students!</button>
+  <p id="placeholderStudentData"></p>
+
+  <div id="newStudentDataForm">
+    <label for="newStudentName">New student's name:</label>
+    <input type="text" name="newStudentName" id="newStudentName">
+    <br>
+    <label for="newStudentYearGroup">New student's year group:</label>
+    <input type="text" name="newStudentYearGroup" id="newStudentYearGroup">
+    <br>
+    <button id="btnPostNewStudentData">Save!</button>
+  </div>
+
+
+</body>
+</html>
